@@ -14,7 +14,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, LaratrustUserTrait;
 
     protected $fillable = [
-        'name', 'email', 'password'
+        'name', 'email', 'password', 'birthdate'
     ]; //end of fillable
 
     protected $hidden = [
