@@ -82,6 +82,8 @@ class MovieController extends Controller
                 $this->deleteImage($movie->image, 'movies/');
             }
             $movies_data['image'] = $this->uploadImage($request->image, 'images/movies');
+        } else if ($request->image) {
+            $movies_data['image'] = $this->uploadImage($request->image, 'images/movies');
         }
         return $movies_data;
     } //end of getMovieData
