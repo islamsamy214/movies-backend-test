@@ -40,7 +40,6 @@ class MovieController extends Controller
     {
         $movie = Movie::create($this->getMovieData($request));
         $movie->categories()->sync($request->categories_ids);
-        session()->flash('success', __('Movie created successfully'));
         return redirect()->route('movies.index');
     } //end of store
 
@@ -56,7 +55,6 @@ class MovieController extends Controller
     {
         $movie->update($this->getMovieData($request, $movie));
         $movie->categories()->sync($request->categories_ids);
-        session()->flash('success', __('Movie updated successfully'));
         return redirect()->route('movies.index');
     } //end of update
 
@@ -68,7 +66,6 @@ class MovieController extends Controller
 
         $movie->categories()->detach();
         $movie->delete();
-        session()->flash('success', __('Movie created successfully'));
         return redirect()->route('movies.index');
     } //end of destroy
 
@@ -92,7 +89,6 @@ class MovieController extends Controller
     public function rate(Movie $movie, RateRequest $request)
     {
         $movie->usersRates()->attach([Auth::id()], $request->all());
-        session()->flash('success', __('Thank you for your feedback'));
         return redirect()->route('movies.index');
     } //end of rate
 }

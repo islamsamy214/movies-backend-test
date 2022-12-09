@@ -38,7 +38,6 @@ class CategoryController extends Controller
         $categories_data = $request->all();
         $categories_data['user_id'] = Auth::id();
         Category::create($categories_data);
-        session()->flash('success', __('Category created successfully'));
         return redirect()->route('categories.index');
     } //end of store
 
@@ -56,7 +55,6 @@ class CategoryController extends Controller
         $categories_data = $request->all();
         $categories_data['user_id'] = Auth::id();
         $category->update($categories_data);
-        session()->flash('success', __('Category updated successfully'));
         return redirect()->route('categories.index');
     } //end of update
 
@@ -66,7 +64,6 @@ class CategoryController extends Controller
     {
         $category->movies()->detach();
         $category->delete();
-        session()->flash('success', __('Category deleted successfully'));
         return redirect()->route('categories.index');
     } //end of destroy
 }

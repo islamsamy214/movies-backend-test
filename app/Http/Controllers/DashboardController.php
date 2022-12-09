@@ -12,5 +12,5 @@ class DashboardController extends Controller
     public function welcome()
     {
         return view('welcome');
-    }//end of welcom
+    }//end of welcome
 }

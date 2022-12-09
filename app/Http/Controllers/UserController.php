@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -36,7 +36,6 @@ class UserController extends Controller
     {
         $user = User::create($this->getUserData($request));
         $this->syncRolesAndPermissions($user, $request);
-        session()->flash('success', __('User created successfully'));
         return redirect()->route('users.index');
     } //end of store
 
@@ -68,7 +67,6 @@ class UserController extends Controller
     {
         $user->update($this->getUserData($request));
         $this->syncRolesAndPermissions($user, $request);
-        session()->flash('success', __('User updated successfully'));
         return redirect()->route('users.index');
     } //end of update
 
@@ -80,7 +78,6 @@ class UserController extends Controller
         //end of detaching roles and permissions
 
         $user->delete();
-        session()->flash('success', __('User Deleted Successfully'));
         return redirect()->route('users.index');
     } //end of destroy
 }
