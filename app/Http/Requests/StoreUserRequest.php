@@ -32,6 +32,6 @@ class StoreUserRequest extends FormRequest
             'birthdate' => ['date'],
             'role' => ['required', Rule::in(['admin', 'user'])],
             'permissions' => ['array']
-        ];
+        ];//end of rules
     }
 }

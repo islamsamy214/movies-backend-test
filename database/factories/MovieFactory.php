@@ -16,9 +16,7 @@ class MovieFactory extends Factory
         return [
             'title' => $this->faker->realText(20),
             'description' => $this->faker->text(),
-            'image' => 'movietest',
-            'rate' => random_int(1, 5),
-            'user_id' => random_int(1, 5),
+            'user_id' => random_int(1, 10),
         ];//end of movies factory
     }
 }

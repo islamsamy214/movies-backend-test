@@ -5,82 +5,68 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct()
+    {
+        $this->middleware(['permission:categories-read'])->only('index');
+        $this->middleware(['permission:categories-create'])->only(['create', 'store']);
+        $this->middleware(['permission:categories-update'])->only(['edit', 'update']);
+        $this->middleware(['permission:categories-delete'])->only('destroy');
+    } //end of constructor
+
+
     public function index()
     {
-        //
-    }
+        $categories = Category::withCount('movies')->latest()->paginate(9);
+        return view('categories.index', compact('categories'));
+    } //end of index
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function create()
     {
-        //
-    }
+        return view('categories.create');
+    } //end of create
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreCategoryRequest  $request
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function store(StoreCategoryRequest $request)
     {
-        //
-    }
+        $categories_data = $request->all();
+        $categories_data['user_id'] = Auth::id();
+        Category::create($categories_data);
+        session()->flash('success', __('Category created successfully'));
+        return redirect()->route('categories.index');
+    } //end of store
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Category $category)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit(Category $category)
     {
-        //
-    }
+        return view('categories.edit', compact('category'));
+    } //end of edit
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateCategoryRequest  $request
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        //
-    }
+        $categories_data = $request->all();
+        $categories_data['user_id'] = Auth::id();
+        $category->update($categories_data);
+        session()->flash('success', __('Category updated successfully'));
+        return redirect()->route('categories.index');
+    } //end of update
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function destroy(Category $category)
     {
-        //
-    }
+        $category->movies()->detach();
+        $category->delete();
+        session()->flash('success', __('Category deleted successfully'));
+        return redirect()->route('categories.index');
+    } //end of destroy
 }

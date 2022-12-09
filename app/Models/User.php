@@ -32,6 +32,11 @@ class User extends Authenticatable
         return $this->hasMany(Movie::class);
     } //end of movies relation
 
+    public function moviesRates()
+    {
+        return $this->belongsToMany(Movie::class, 'rate')->withPivot('rate');
+    } //end of moviesRates relation
+
     public function categories()
     {
         return $this->hasMany(Category::class);

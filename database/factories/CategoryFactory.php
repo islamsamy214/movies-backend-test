@@ -15,7 +15,7 @@ class CategoryFactory extends Factory
     {
         return [
             'title' => $this->faker->realText(10),
-            'user_id' => random_int(1, 5)
+            'user_id' => random_int(1, 10)
         ];//end of category factory
     }
 }

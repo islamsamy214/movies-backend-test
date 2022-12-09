@@ -17,6 +17,11 @@ class Category extends Model
         'user_id'
     ]; //end of hidden
 
+    public function getTitleAttribute($title)
+    {
+        return ucfirst($title);
+    }//end of getTitleAttribute accessor
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCategoryRequest extends FormRequest
+class RateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class UpdateCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => ['required', 'string', 'max:255', Rule::unique('categories')->ignore($this->categories)]
-        ];//end of rules
-    }
+            'rate' => ['required', 'integer', Rule::in([1, 2, 3, 4, 5])]
+        ];
+    }//end of rules
 }

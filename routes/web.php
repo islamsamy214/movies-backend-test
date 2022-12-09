@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MovieController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,4 +20,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('users', UserController::class);
     //end of users routes
+
+    Route::resource('categories', CategoryController::class);
+    //end of categories controller
+
+    Route::resource('movies', MovieController::class)->except('show');
+    Route::get('movies/rate/{movie}', [MovieController::class, 'rate'])
+        ->name('movies.rate');
+    //end of movies controller
 });//end of authenticated routes
