@@ -6,7 +6,6 @@ use App\Http\Requests\RateRequest;
 use App\Models\Movie;
 use App\Models\Category;
 use App\Traits\ImageTrait;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
@@ -39,24 +38,11 @@ class MovieController extends Controller
 
     public function store(StoreMovieRequest $request)
     {
-        $movies_data = $request->except(['image', 'categories_ids']);
-        $movies_data['user_id'] = Auth::id();
-        if ($request->image) {
-            $movies_data['image'] = $this->uploadImage($request->image, 'images/movies');
-        }
-        $movie = Movie::create($movies_data);
+        $movie = Movie::create($this->getMovieData($request));
         $movie->categories()->sync($request->categories_ids);
         session()->flash('success', __('Movie created successfully'));
         return redirect()->route('movies.index');
-    }
-
-
-    public function rate(Movie $movie, RateRequest $request)
-    {
-        $movie->usersRates()->attach([Auth::id()], $request->all());
-        session()->flash('success', __('Thank you for your feedback'));
-        return redirect()->route('movies.index');
-    } //end of rate
+    } //end of store
 
 
     public function edit(Movie $movie)
@@ -68,15 +54,7 @@ class MovieController extends Controller
 
     public function update(UpdateMovieRequest $request, Movie $movie)
     {
-        $movies_data = $request->except(['image', 'categories_ids']);
-        $movies_data['user_id'] = Auth::id();
-        if ($request->image) {
-            if ($movie->image != 'default.jpg') {
-                $this->deleteImage($movie->image, 'movies/');
-            }
-            $movies_data['image'] = $this->uploadImage($request->image, 'images/movies');
-        }
-        $movie->update($movies_data);
+        $movie->update($this->getMovieData($request, $movie));
         $movie->categories()->sync($request->categories_ids);
         session()->flash('success', __('Movie updated successfully'));
         return redirect()->route('movies.index');
@@ -85,12 +63,34 @@ class MovieController extends Controller
 
     public function destroy(Movie $movie)
     {
-        if ($movie->image != 'default.jpg') {
+        if ($movie->image != 'default.jpg')
             $this->deleteImage($movie->image, 'movies/');
-        }
+
         $movie->categories()->detach();
         $movie->delete();
         session()->flash('success', __('Movie created successfully'));
         return redirect()->route('movies.index');
     } //end of destroy
+
+
+    public function getMovieData($request, $movie = null)
+    {
+        $movies_data = $request->except(['image', 'categories_ids']);
+        $movies_data['user_id'] = Auth::id();
+        if ($request->image && $movie != null) {
+            if ($movie->image != 'default.jpg') {
+                $this->deleteImage($movie->image, 'movies/');
+            }
+            $movies_data['image'] = $this->uploadImage($request->image, 'images/movies');
+        }
+        return $movies_data;
+    } //end of getMovieData
+
+
+    public function rate(Movie $movie, RateRequest $request)
+    {
+        $movie->usersRates()->attach([Auth::id()], $request->all());
+        session()->flash('success', __('Thank you for your feedback'));
+        return redirect()->route('movies.index');
+    } //end of rate
 }

@@ -16,7 +16,7 @@ class UserController extends Controller
         $this->middleware(['permission:users-create'])->only(['create', 'store']);
         $this->middleware(['permission:users-update'])->only(['edit', 'update']);
         $this->middleware(['permission:users-delete'])->only('destroy');
-    }//end of constructor
+    } //end of constructor
 
     public function index()
     {
@@ -34,22 +34,27 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        $user_data = $request->except(['permissions', 'role', 'password']);
-
-        $password = Hash::make($request->password);
-        $user_data['password'] = $password;
-        // end of formatting password
-
-        $user = User::create($user_data);
-        // end of storing the user
-
-        $user->attachRole($request->role);
-        $user->attachPermissions($request->permissions);
-        //end of attaching permissions
-
+        $user = User::create($this->getUserData($request));
+        $this->syncRolesAndPermissions($user, $request);
         session()->flash('success', __('User created successfully'));
         return redirect()->route('users.index');
     } //end of store
+
+
+    public function getUserData($request)
+    {
+        $user_data = $request->except(['permissions', 'role', 'password']);
+        $password = Hash::make($request->password);
+        $user_data['password'] = $password;
+        return $user_data;
+    } //end of getUserData
+
+
+    public function syncRolesAndPermissions($user, $request)
+    {
+        $user->syncRoles([$request->role]);
+        $user->syncPermissions($request->permissions);
+    } //end of syncRolesAndPermissions
 
 
     public function edit(User $user)
@@ -61,22 +66,8 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user)
     {
-        $user_data = $request->except(['permissions', 'role', 'password']);
-
-        $password = Hash::make($request->password);
-        $user_data['password'] = $password;
-        // end of formatting password
-
-        $user->update($user_data);
-        // end of storing the user
-
-        if ($user->getRoles()[0] != $request->role) {
-            $user->detachRole($user->getRoles()[0]);
-            $user->attachRole($request->role);
-        }
-        $user->syncPermissions($request->permissions);
-        //end of attaching permissions
-
+        $user->update($this->getUserData($request));
+        $this->syncRolesAndPermissions($user, $request);
         session()->flash('success', __('User updated successfully'));
         return redirect()->route('users.index');
     } //end of update
