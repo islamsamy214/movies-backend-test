@@ -33,3 +33,9 @@ php artisan serve
 ```
 
 and open this url on your browser `127.0.0.1:8000`
+
+#USAGE
+you can start with 
+``
+Email: super_admin@app.com   && Pass: 12345678
+``
